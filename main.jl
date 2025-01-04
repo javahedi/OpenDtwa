@@ -3,9 +3,8 @@ using Logging
 using BSON
 using Statistics
 using ProgressMeter
-using OpenDtwa  # Ensure the package is installed and accessible
+using OpenDtwa  
 
-#using .OpenDtwa.configs: load_configuration
 
 # Add worker processes if only one process exists
 if nprocs() == 1
@@ -17,8 +16,6 @@ end
     using BSON
     using Statistics
     using OpenDtwa    
-    #using .OpenDtwa.modules: coupling_longRange_random
-
 end
 
 
@@ -68,7 +65,6 @@ end
         BSON.@save output_file ave_solution std_solution
         @info "Worker $(myid()): Saved results to $output_file"
 
-        #sleep(1)
         return true
     catch e
         @warn "Worker $(myid()): Error in disorder realization $d: $e"
@@ -76,42 +72,38 @@ end
     end
 end
 
-# Use pmap for parallel processing
-results = pmap(compute_disorder, 1:params.n_disorders)
 
-# Summary of results
-successful = count(x -> x, results)
-failed     = count(x -> !x, results)
-@info "Completed all computations"
-@info "Successful realizations: $successful"
-@info "Failed realizations: $failed"
+
+function run_parallel_computation()
+    @info "Starting parallel computations"
+    results = pmap(compute_disorder, 1:params.n_disorders)
+    return results
+end
+
+
+function summarize_results(results)
+    successful = count(x -> x, results)
+    failed = count(x -> !x, results)
+    @info "Completed all computations"
+    @info "Successful realizations: $successful"
+    @info "Failed realizations: $failed"
+end
+
+
+# --- Main Execution Flow ---
+function main()
+
+    # Run the parallel computation
+    results = run_parallel_computation()
+
+    # Summarize the results
+    summarize_results(results)
+end
+
+# Run the main function
+main()
 
 
 
 #julia --project=./OpenDtwa -t 4 main.jl  # multiple threads:
 #julia --project=./OpenDtwa -p 4 main.jl  # distributed processes
-
-
-├── DATA
-│   ├── alpha1.0
-│   │   ├── disorder_001.bson
-│   ├── alpha2.0
-│   │   ├── disorder_001.bson
-│   └── alpha3.0
-│       ├── disorder_001.bson
-│      
-├── OpenDtwa
-│   ├── Manifest.toml
-│   ├── Project.toml
-│   └── src
-│       ├── OpenDtwa.jl
-│       ├── configs.jl
-│       ├── modules.jl
-│       └── solvers.jl
-├── config.json
-├── magnetization.pdf
-├── main.jl
-├── plot.jl
-└── test
-    └── runtest.jl
-
