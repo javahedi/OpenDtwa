@@ -52,7 +52,6 @@ module solvers
         jsy   = 2.0 * ( jy * Ay +  hy )
         jsz   = 2.0 * ( jz * Az +  hz )
         
-
         @. dux = uy * jsz - uz * jsy + 0.5 * gx * ux
         @. duy = uz * jsx - ux * jsz + 0.5 * gy * uy
         @. duz = ux * jsy - uy * jsx + 1.0 * gz * (1.0 .+ uz)
@@ -72,12 +71,9 @@ module solvers
         duy = @view du[:,2] 
         duz = @view du[:,3] 
         
-    
         jsx   = 2.0 * (jmat[:,:,1]* ux + fields[:,1]) 
         jsy   = 2.0 * (jmat[:,:,2]* uy + fields[:,2])
         jsz   = 2.0 * (jmat[:,:,3]* uz + fields[:,3])
-
-
 
         @. dux = uy * jsz - uz * jsy - 0.5 * decayRate[:,1] * ux
         @. duy = uz * jsx - ux * jsz - 0.5 * decayRate[:,2] * uy
@@ -171,7 +167,6 @@ module solvers
 
         prob          = SDEProblem(dtwa_decay!, noise_decay!, y0, (params.tmin, params.tmax),input)
         ensemble_prob = EnsembleProblem(prob, prob_func = prob_func)
-
 
 
         #------------------------------

@@ -3,45 +3,43 @@ module configs
     using OpenDtwa
     using JSON
 
-    export Param, initialize_parameters, create_timepoints, 
-        get_default_params, get_default_timepoints, load_configuration
+    export Param, initialize_parameters, decayRate,  
+            get_default_timepoints, load_configuration
 
     # Define the Param struct
     """
-    The Param struct holds simulation parameters for the OpenDtwa module.
-
     Fields:
         lattice_length::Int   - Length of the lattice.
         lattice_size::Int     - Size of the lattice.
         n_samples::Int        - Number of samples.
         n_disorders::Int      - Number of disorders.
-        α::Float64            - Decay exponent.
+        γ::Float64            - dispersion rate.
+        α::Float64            - Coupling exponent.
         dt::Float64           - Time step, FOR ODE solver
         tmin::Float64         - Minimum time.
         tmax::Float64         - Maximum time.
         field::Vector{Float64} - Magnetic field components [hx, hy, hz].
         Jxyz::Vector{Float64}  - Interaction terms [Jxx, Jyy, Jzz].
-        decayRate::Vector{Float64} - Decay rates [γx, γy, γz].
-        dispersion::String     - Dispersion type ("decay", "other").
+        dispersion::String     - dispersion type ("decay", "other").
     """
     struct Param
         lattice_length::Int
         lattice_size::Int
         n_samples::Int
         n_disorders::Int
+        γ::Float64
         α::Float64
         dt::Float64
         tmin::Float64
         tmax::Float64
         field::Vector{Float64}
         Jxyz::Vector{Float64}
-        decayRate::Vector{Float64}
         dispersion::String
     end
 
     # Constructor with keyword arguments
-    Param(; lattice_length, lattice_size, n_samples, n_disorders, α, dt, tmin, tmax, field, Jxyz, decayRate, dispersion) = 
-        Param(lattice_length, lattice_size, n_samples, n_disorders, α, dt, tmin, tmax, field, Jxyz, decayRate, dispersion)
+    Param(; lattice_length, lattice_size, n_samples, n_disorders, γ, α, dt, tmin, tmax, field, Jxyz, dispersion) = 
+        Param(lattice_length, lattice_size, n_samples, n_disorders, γ,  α, dt, tmin, tmax, field, Jxyz, dispersion)
 
 
 
@@ -64,13 +62,13 @@ module configs
             lattice_size = file_content["lattice_size"],
             n_samples = file_content["n_samples"],
             n_disorders = file_content["n_disorders"],
+            γ = file_content["γ"],
             α = file_content["α"],
             dt = file_content["dt"],
             tmin = file_content["tmin"],
             tmax = file_content["tmax"],
             field = file_content["field"],
             Jxyz = file_content["Jxyz"],
-            decayRate = file_content["decayRate"],
             dispersion = file_content["dispersion"]
         )
     end
@@ -88,13 +86,13 @@ module configs
             lattice_size   = 10,
             n_samples      = 30,
             n_disorders    = 50,
+            γ              = 0.1,
             α              = 3.0,
             dt             = 0.02,
             tmin           = 0.1,
             tmax           = 100.0,
             field          = [0.0, 0.0, 0.0],
             Jxyz           = [1.0, 1.0, 0.0],
-            decayRate      = [0.1, 0.1, 0.1],
             dispersion     = "decay",
         )
     end
@@ -146,7 +144,17 @@ module configs
         end
     end
 
-
+    function create_decayRate()
+        p = get_default_params()
+        if p.dispersion == "decay"
+            return [1.0, 1.0, 1.0] .* p.γ
+        elseif p.dispersion == "dephase"
+            return [1.0, 1.0, 0.0] .* p.γ
+        end
+        return
+    end
+   
     timepoints = get_default_timepoints()
+    decayRate  = create_decayRate()
 
 end

@@ -15,7 +15,7 @@ using Test
     @test params.n_samples == 30
     @test params.field == [0.0, 0.0, 0.0]
     @test params.Jxyz == [1.0, 1.0, 0.0]
-    @test params.dispersion == "dephase"
+    @test params.dispersion == "decay"
 end
 
 # Test create_timepoints function (configs module)

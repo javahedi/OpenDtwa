@@ -1,6 +1,6 @@
 module modules
 
-    using OpenDtwa.configs: Param
+    using OpenDtwa.configs: Param, decayRate
     using StatsBase
     using LinearAlgebra
 
@@ -109,6 +109,8 @@ module modules
     # Function to update parameters
     function update_parameters(Jmn::Matrix{Float64}, params::Param)
         
+
+
         # Create the fields matrix (lattice_size x 3)
         fields_mat = Array{Float64, 2}(undef, params.lattice_size, 3)
         #fields_mat[:,1]= ones(Float64, params.lattice_size) .* params.field[1]
@@ -120,7 +122,7 @@ module modules
         #decayRate_mat[:,1]= ones(Float64, params.lattice_size) .* params.decayRate[1]
         #decayRate_mat[:,2]= ones(Float64, params.lattice_size) .* params.decayRate[2]
         #decayRate_mat[:,3]= ones(Float64, params.lattice_size) .* params.decayRate[3]
-        decayRate_mat = repeat(params.decayRate', params.lattice_size, 1)
+        decayRate_mat = repeat(decayRate', params.lattice_size, 1)
 
         # Create the Jmn matrix (lattice_size x lattice_size x 3)
         Jmn_mat = Array{Float64, 3}(undef, params.lattice_size, params.lattice_size, 3)

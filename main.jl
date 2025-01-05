@@ -104,6 +104,5 @@ end
 main()
 
 
-
 #julia --project=./OpenDtwa -t 4 main.jl  # multiple threads:
 #julia --project=./OpenDtwa -p 4 main.jl  # distributed processes

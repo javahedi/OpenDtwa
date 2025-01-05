@@ -3,13 +3,13 @@
     "lattice_size": 10,
     "n_samples": 30,
     "n_disorders": 10,
+    "γ": 0.1,
     "α": 2.0,
     "dt": 0.01,
     "tmin": 0.1,
     "tmax": 100.0,
     "field": [0.0, 0.0, 0.0],
     "Jxyz": [1.0, 1.0, 0.0],
-    "decayRate": [0.1, 0.1, 0.1],
     "dispersion": "decay"
   }
   
