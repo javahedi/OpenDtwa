@@ -18,7 +18,7 @@ module OpenDtwa
     include("modules.jl")
     include("solvers.jl")
 
-    greet() = print("Hello World!")
-    greet_alien() = print("Hello ", Random.randstring(8))
+    #greet() = print("Hello World!")
+    #greet_alien() = print("Hello ", Random.randstring(8))
 
 end # module OpenDtwa

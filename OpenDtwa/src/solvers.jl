@@ -154,18 +154,18 @@ module solvers
 
 
     ########################################
-    function solver_ensemble(input, params::Param, discrete::Bool)
+    function solver_ensemble(input, p::Param, discrete::Bool)
 
         #------------------------------
-        y0      = initial_state(params.lattice_size, discrete=discrete)
-        list_y0 = [initial_state(params.lattice_size, discrete=discrete) for _ in 1:params.n_samples]
+        y0      = initial_state(p.lattice_size, discrete=discrete)
+        list_y0 = [initial_state(p.lattice_size, discrete=discrete) for _ in 1:p.n_samples]
 
         #------------------------------
         function prob_func(prob, i, repeat)
             remake(prob, u0 =list_y0[i])
         end
 
-        prob          = SDEProblem(dtwa_decay!, noise_decay!, y0, (params.tmin, params.tmax),input)
+        prob          = SDEProblem(dtwa_decay!, noise_decay!, y0, (p.tmin, p.tmax),input)
         ensemble_prob = EnsembleProblem(prob, prob_func = prob_func)
 
 
@@ -175,7 +175,7 @@ module solvers
         
 
         sol = solve(ensemble_prob, alg_switch,
-                dt = params.dt,
+                dt = p.dt,
                 adaptive = false,
                 alg_hints = [:stiff],  # Assuming your problem is stiff
                 saveat = timepoints,
